@@ -1,0 +1,89 @@
+---
+// src/components/NewsCard.astro
+
+// TypeScript interface for the article prop, based on schema.sql
+export interface Article {
+  id: number;
+  title_en: string;
+  summary_en: string;
+  title_ko: string;
+  summary_ko: string;
+  source: string;
+  source_url: string;
+  classify_method: string;
+  confidence: number;
+  published_at: string;
+  created_at: string;
+  article_hash: string;
+}
+
+interface Props {
+  article: Article;
+}
+
+const { article } = Astro.props;
+
+// Helper to get emoji for source
+const getSourceMeta = (source: string) => {
+  if (!source) return { emoji: '📰', color: 'bg-gray-500' };
+  const lowerSource = source.toLowerCase();
+  if (lowerSource.includes('nature')) {
+    return { emoji: '🔬', color: 'bg-blue-600' };
+  }
+  if (lowerSource.includes('science')) {
+    return { emoji: '🧬', color: 'bg-green-600' };
+  }
+  if (lowerSource.includes('live science')) {
+    return { emoji: '🦖', color: 'bg-yellow-600' };
+  }
+  return { emoji: '📰', color: 'bg-gray-500' };
+}
+
+const { emoji, color } = getSourceMeta(article.source);
+
+// Format date to YYYY.MM.DD
+const formattedDate = new Date(article.published_at).toLocaleDateString('ko-KR', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+}).replace(/\s/g, '').slice(0, -1);
+
+const confidencePercentage = (article.confidence * 100).toFixed(0);
+---
+
+<div class="bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-700 hover:border-blue-500 transition-colors duration-300">
+  <!-- Card Header -->
+  <div class="flex justify-between items-center mb-4 text-sm text-gray-400">
+    <div class="flex items-center gap-2">
+      <span class:list={[color, "text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-white"]}>
+        {emoji} {article.source}
+      </span>
+    </div>
+    <span>{formattedDate}</span>
+  </div>
+
+  <!-- English Content -->
+  <div class="mb-4">
+    <h3 class="text-xl font-bold text-gray-100 mb-2">{article.title_en}</h3>
+    <p class="text-gray-300 text-sm leading-relaxed">{article.summary_en}</p>
+  </div>
+
+  <!-- Divider -->
+  <hr class="border-gray-600 my-4">
+
+  <!-- Korean Content -->
+  <div class="mb-4">
+    <h3 class="text-lg font-bold text-gray-200 mb-2">{article.title_ko}</h3>
+    <p class="text-gray-400 text-sm leading-relaxed">{article.summary_ko}</p>
+  </div>
+
+  <!-- Card Footer -->
+  <div class="flex justify-between items-center text-sm text-blue-400">
+    <a href={article.source_url} target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-blue-300">
+      🔗 원문 보기
+    </a>
+    <span class="text-gray-500" title={`Classify Method: ${article.classify_method}`}>
+      신뢰도: {confidencePercentage}%
+    </span>
+  </div>
+</div>

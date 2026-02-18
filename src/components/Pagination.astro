@@ -1,0 +1,51 @@
+---
+// src/components/Pagination.astro
+interface Props {
+  page: number;
+  totalPages: number;
+  source?: string;
+}
+
+const { page, totalPages, source = 'all' } = Astro.props;
+
+const createUrl = (p: number) => {
+  const params = new URLSearchParams();
+  if (p > 1) {
+    params.set('page', p.toString());
+  }
+  if (source && source !== 'all') {
+    params.set('source', source);
+  }
+  const queryString = params.toString();
+  return queryString ? `?${queryString}` : '/';
+}
+---
+
+<nav class="flex justify-center items-center gap-4 my-8 text-white">
+  <!-- Previous Button -->
+  {page > 1 ? (
+    <a href={createUrl(page - 1)} class="px-4 py-2 bg-gray-700 rounded-md hover:bg-blue-600 transition-colors">
+      &larr; Previous
+    </a>
+  ) : (
+    <span class="px-4 py-2 bg-gray-800 text-gray-500 rounded-md cursor-not-allowed">
+      &larr; Previous
+    </span>
+  )}
+
+  <!-- Page Info -->
+  <span class="text-gray-400">
+    Page {page} of {totalPages}
+  </span>
+
+  <!-- Next Button -->
+  {page < totalPages ? (
+    <a href={createUrl(page + 1)} class="px-4 py-2 bg-gray-700 rounded-md hover:bg-blue-600 transition-colors">
+      Next &rarr;
+    </a>
+  ) : (
+    <span class="px-4 py-2 bg-gray-800 text-gray-500 rounded-md cursor-not-allowed">
+      Next &rarr;
+    </span>
+  )}
+</nav>

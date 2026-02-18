@@ -1,0 +1,7 @@
+name = "dino-news-web"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "dino-news-db"
+database_id = "6b1d175b-1ea4-4b1f-8c5c-42d0ccf85ccf85264"

@@ -1,17 +1,71 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import NewsCard from '../components/NewsCard.astro';
+import type { Article } from '../components/NewsCard.astro';
+import Pagination from '../components/Pagination.astro';
 
+// Fetching data from the worker API
+const page = parseInt(Astro.url.searchParams.get('page') || '1');
+const source = Astro.url.searchParams.get('source') || 'all';
+
+// Astro.url.origin provides the base URL for fetch, works in dev and prod
+const apiUrl = new URL('/api/articles', Astro.url.origin);
+apiUrl.searchParams.set('page', page.toString());
+apiUrl.searchParams.set('source', source);
+
+let articles: Article[] = [];
+let totalPages = 1;
+let currentPage = page;
+let error: string | null = null;
+
+try {
+  const response = await fetch(apiUrl.toString());
+  if (!response.ok) {
+    throw new Error(`API call failed with status: ${response.status}`);
+  }
+  const data = await response.json();
+  articles = data.articles;
+  totalPages = data.totalPages;
+  currentPage = data.page;
+} catch (e: any) {
+  console.error(e);
+  error = '아티클을 가져오는 데 실패했습니다. API가 실행 중인지 확인하세요.';
+
+  // Provide dummy data on error to allow UI to render
+  articles = [
+      { id: 1, title_en: 'Dummy: T-Rex Was a Gentle Giant', summary_en: 'A new study suggests T-Rex might have been a herbivore.', title_ko: '더미: 티렉스는 부드러운 거인이었다', summary_ko: '새로운 연구에 따르면 티렉스는 초식동물이었을 수도 있습니다.', source: 'Fake Science', source_url: '#', classify_method: 'test', confidence: 0.99, published_at: new Date().toISOString(), created_at: new Date().toISOString(), article_hash: 'dummy1' },
+      { id: 2, title_en: 'Dummy: Velociraptors Had Feathers', summary_en: 'Fossil evidence confirms that velociraptors were feathery creatures.', title_ko: '더미: 벨로시랩터는 깃털을 가지고 있었다', summary_ko: '화석 증거는 벨로시랩터가 깃털을 가진 생물이었음을 확인시켜줍니다.', source: 'Live Science', source_url: '#', classify_method: 'test', confidence: 0.95, published_at: new Date().toISOString(), created_at: new Date().toISOString(), article_hash: 'dummy2' },
+  ];
+  totalPages = 1;
+  currentPage = 1;
+}
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Dinosaur News">
+  <Header />
+
+  <main class="container mx-auto px-4 py-8">
+    {error && (
+      <div class="text-center text-red-400 bg-gray-800 border border-red-500 p-4 rounded-lg mb-6">
+        <p><strong>Error!</strong></p>
+        <p>{error}</p>
+      </div>
+    )}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {articles && articles.length > 0 ? articles.map(article => (
+        <NewsCard article={article} />
+      )) : (
+        <div class="col-span-full text-center py-12">
+          <p class="text-xl">No articles found.</p>
+          <p class="text-gray-500">Try fetching them again later.</p>
+        </div>
+      )}
+    </div>
+
+    {articles && articles.length > 0 && totalPages > 1 && (
+       <Pagination page={currentPage} totalPages={totalPages} source={source} />
+    )}
+  </main>
+</Layout>
