@@ -5,4 +5,4 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "dino-news-db"
-database_id = "6b1d175b-1ea4-4b1f-8c5c-42d0ccf85ccf85264"
+database_id = "88e867ee-3dd6-421f-982e-65947e89eb75"
