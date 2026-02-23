@@ -31,7 +31,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
         ).bind(body.article_hash).first();
 
         if (existing) {
-            return new Response(JSON.stringify({ success: true, id: existing.id, duplicate: true }), { status: 200 });
+            return new Response(JSON.stringify({ success: true, id: existing.id, duplicate: true }), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' }
+            });
         }
 
         // Insert into D1
@@ -51,7 +54,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
             body.article_hash
         ).run();
 
-        return new Response(JSON.stringify({ success: true, id: result.meta.last_row_id }), { status: 200 });
+        return new Response(JSON.stringify({ success: true, id: result.meta.last_row_id }), {
+            status: 200,
+            headers: { 'Content-Type': 'application/json' }
+        });
 
     } catch (e) {
         console.error(e);
