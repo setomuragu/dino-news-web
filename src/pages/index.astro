@@ -8,11 +8,15 @@ import Pagination from '../components/Pagination.astro';
 // Fetching data from the worker API
 const page = parseInt(Astro.url.searchParams.get('page') || '1');
 const source = Astro.url.searchParams.get('source') || 'all';
+const searchQuery = Astro.url.searchParams.get('q') || '';
 
 // Astro.url.origin provides the base URL for fetch, works in dev and prod
 const apiUrl = new URL('/api/articles', Astro.url.origin);
 apiUrl.searchParams.set('page', page.toString());
 apiUrl.searchParams.set('source', source);
+if (searchQuery) {
+  apiUrl.searchParams.set('q', searchQuery);
+}
 
 let articles: Article[] = [];
 let totalPages = 1;
@@ -46,6 +50,21 @@ try {
   <Header />
 
   <main class="container mx-auto px-4 py-8">
+    <div class="mb-8 max-w-xl mx-auto">
+      <form action="/" method="GET" class="flex gap-2">
+        <input 
+          type="text" 
+          name="q" 
+          value={searchQuery}
+          placeholder="뉴스 검색 (예: 티렉스, 화석...)" 
+          class="flex-1 px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
+        />
+        <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
+          검색
+        </button>
+      </form>
+    </div>
+
     {error && (
       <div class="text-center text-red-400 bg-gray-800 border border-red-500 p-4 rounded-lg mb-6">
         <p><strong>Error!</strong></p>
@@ -58,14 +77,14 @@ try {
         <NewsCard article={article} />
       )) : (
         <div class="col-span-full text-center py-12">
-          <p class="text-xl">No articles found.</p>
-          <p class="text-gray-500">Try fetching them again later.</p>
+          <p class="text-xl">검색 결과가 없습니다.</p>
+          <p class="text-gray-500">다른 검색어로 다시 시도해보세요.</p>
         </div>
       )}
     </div>
 
-    {articles && articles.length > 0 && totalPages > 1 && (
-       <Pagination page={currentPage} totalPages={totalPages} source={source} />
+    {articles && totalPages > 1 && (
+       <Pagination page={currentPage} totalPages={totalPages} source={source} searchQuery={searchQuery} />
     )}
   </main>
 </Layout>

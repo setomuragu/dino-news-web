@@ -28,25 +28,41 @@ export const GET: APIRoute = async ({ locals, request }) => {
     const page = parseInt(url.searchParams.get('page') || '1');
     const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 50);
     const source = url.searchParams.get('source') || 'all';
+    const searchQuery = url.searchParams.get('q') || '';
     const offset = (page - 1) * limit;
 
     let query = 'SELECT * FROM articles';
     let countQuery = 'SELECT COUNT(*) as total FROM articles';
-    const params: (string|number)[] = [];
+    
+    const whereConditions = [];
+    const baseParams: (string|number)[] = [];
 
     if (source !== 'all') {
-        query += ' WHERE source = ?';
-        countQuery += ' WHERE source = ?';
-        params.push(source);
+        whereConditions.push('source = ?');
+        baseParams.push(source);
+    }
+
+    if (searchQuery) {
+        whereConditions.push('(title_ko LIKE ? OR title_en LIKE ? OR summary_ko LIKE ? OR summary_en LIKE ?)');
+        const likeQuery = `%${searchQuery}%`;
+        baseParams.push(likeQuery, likeQuery, likeQuery, likeQuery);
+    }
+
+    if (whereConditions.length > 0) {
+        const whereClause = ' WHERE ' + whereConditions.join(' AND ');
+        query += whereClause;
+        countQuery += whereClause;
     }
 
     query += ' ORDER BY published_at DESC LIMIT ? OFFSET ?';
-    params.push(limit, offset);
+    
+    const queryParams = [...baseParams, limit, offset];
+    const countParams = [...baseParams];
 
     try {
         const [articlesRes, countResult] = await Promise.all([
-            env.DB.prepare(query).bind(...params).all(),
-            env.DB.prepare(countQuery).bind(...(source !== 'all' ? [source] : [])).first()
+            env.DB.prepare(query).bind(...queryParams).all(),
+            env.DB.prepare(countQuery).bind(...countParams).first()
         ]);
 
         return new Response(JSON.stringify({

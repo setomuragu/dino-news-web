@@ -4,9 +4,10 @@ interface Props {
   page: number;
   totalPages: number;
   source?: string;
+  searchQuery?: string;
 }
 
-const { page, totalPages, source = 'all' } = Astro.props;
+const { page, totalPages, source = 'all', searchQuery = '' } = Astro.props;
 
 const createUrl = (p: number) => {
   const params = new URLSearchParams();
@@ -15,6 +16,9 @@ const createUrl = (p: number) => {
   }
   if (source && source !== 'all') {
     params.set('source', source);
+  }
+  if (searchQuery) {
+    params.set('q', searchQuery);
   }
   const queryString = params.toString();
   return queryString ? `?${queryString}` : '/';
