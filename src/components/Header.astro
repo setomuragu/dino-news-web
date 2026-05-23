@@ -1,13 +1,31 @@
 ---
 // src/components/Header.astro
+const searchQuery = Astro.url.searchParams.get('q') || '';
 ---
 <header class="bg-gray-900 border-b border-gray-700 shadow-md">
-  <div class="container mx-auto px-4 py-6">
-    <h1 class="text-4xl font-bold text-white tracking-wider">
-      <a href="/" class="hover:text-blue-400 transition-colors">
-        🦕 Dinosaur News
-      </a>
-    </h1>
-    <p class="text-gray-400 mt-1">The latest paleontological discoveries, translated for you.</p>
+  <div class="container mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div>
+      <h1 class="text-4xl font-bold text-white tracking-wider">
+        <a href="/" class="hover:text-blue-400 transition-colors">
+          🦕 Dinosaur News
+        </a>
+      </h1>
+      <p class="text-gray-400 mt-1">The latest paleontological discoveries, translated for you.</p>
+    </div>
+    
+    <form action="/" method="GET" class="w-full md:w-auto flex">
+      <input 
+        type="text" 
+        name="q" 
+        value={searchQuery}
+        placeholder="공룡 이름 검색..." 
+        class="w-full md:w-64 px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-l-md focus:outline-none focus:border-blue-400"
+      />
+      <button 
+        type="submit" 
+        class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-r-md hover:bg-blue-700 transition-colors">
+        검색
+      </button>
+    </form>
   </div>
 </header>
