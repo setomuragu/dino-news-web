@@ -41,12 +41,12 @@ const getSourceMeta = (source: string) => {
 
 const { emoji, color } = getSourceMeta(article.source);
 
-// Format date to YYYY.MM.DD
-const formattedDate = new Date(article.published_at).toLocaleDateString('ko-KR', {
+// Format date as "Aug 11, 2026"
+const formattedDate = new Date(article.published_at).toLocaleDateString('en-US', {
   year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-}).replace(/\s/g, '').slice(0, -1);
+  month: 'short',
+  day: 'numeric',
+});
 
 const confidencePercentage = (article.confidence * 100).toFixed(0);
 
