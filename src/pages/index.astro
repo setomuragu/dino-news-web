@@ -56,11 +56,11 @@ try {
           type="text" 
           name="q" 
           value={searchQuery}
-          placeholder="뉴스 검색 (예: 티렉스, 화석...)" 
+          placeholder="Search news (e.g. T. rex, fossil, Cretaceous)"
           class="flex-1 px-4 py-2 bg-gray-800 text-white border border-gray-700 rounded-lg focus:outline-none focus:border-blue-500"
         />
         <button type="submit" class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors">
-          검색
+          Search
         </button>
       </form>
     </div>
@@ -77,8 +77,8 @@ try {
         <NewsCard article={article} />
       )) : (
         <div class="col-span-full text-center py-12">
-          <p class="text-xl">검색 결과가 없습니다.</p>
-          <p class="text-gray-500">다른 검색어로 다시 시도해보세요.</p>
+          <p class="text-xl">No results found.</p>
+          <p class="text-gray-500">Try a different search term.</p>
         </div>
       )}
     </div>

@@ -96,10 +96,10 @@ const truncatedSummaryEn = truncate(article.summary_en);
   <!-- Card Footer -->
   <div class="flex justify-between items-center text-sm text-blue-400 mt-4">
     <a href={article.source_url} target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-blue-300">
-      🔗 원문 보기
+      🔗 Read original
     </a>
     <span class="text-gray-500" title={`Classify Method: ${article.classify_method}`}>
-      신뢰도: {confidencePercentage}%
+      Confidence: {confidencePercentage}%
     </span>
   </div>
 </div>

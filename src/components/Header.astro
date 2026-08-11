@@ -18,13 +18,13 @@ const searchQuery = Astro.url.searchParams.get('q') || '';
         type="text" 
         name="q" 
         value={searchQuery}
-        placeholder="공룡 이름 검색..." 
+        placeholder="Search dinosaurs..."
         class="w-full md:w-64 px-4 py-2 bg-gray-800 text-white border border-gray-600 rounded-l-md focus:outline-none focus:border-blue-400"
       />
       <button 
         type="submit" 
         class="px-4 py-2 bg-blue-600 text-white font-semibold rounded-r-md hover:bg-blue-700 transition-colors">
-        검색
+        Search
       </button>
     </form>
   </div>
